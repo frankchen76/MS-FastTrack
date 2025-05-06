@@ -14,10 +14,10 @@
 # Global configuration
 $script:Config = @{
     DefaultOutputDirectory = $PWD.Path
-    LogDirectory = $PWD.Path
-    SessionActive = $false
-    MGGraphSession = $null
-    ExchangeSession = $null
+    LogDirectory           = $PWD.Path
+    SessionActive          = $false
+    MGGraphSession         = $null
+    ExchangeSession        = $null
 }
 
 # Function to create consistent output path
@@ -40,7 +40,8 @@ function Get-OutputPath {
     # Use custom path if provided, otherwise use default directory
     $outputDir = if ([string]::IsNullOrWhiteSpace($CustomPath)) {
         $script:Config.DefaultOutputDirectory
-    } else {
+    }
+    else {
         $CustomPath
     }
     
@@ -54,7 +55,8 @@ function Get-OutputPath {
     $timestamp = Get-Date -Format 'yyyyMMdd_HHmmss'
     $fileName = if ([string]::IsNullOrWhiteSpace($BaseName)) {
         "Export_${timestamp}.${Extension}"
-    } else {
+    }
+    else {
         "${BaseName}_${timestamp}.${Extension}"
     }
     
@@ -164,13 +166,15 @@ function Export-EntraUsersDetails {
     # Generate consistent output paths
     $outputFilePath = if ([string]::IsNullOrWhiteSpace($OutputPath)) {
         Get-OutputPath -BaseName "EntraUsersExport" -CreateDirectory
-    } else {
+    }
+    else {
         $OutputPath
     }
     
     $logFilePath = if ([string]::IsNullOrWhiteSpace($LogPath)) {
         Get-LogPath -BaseName "EntraUsersExport"
-    } else {
+    }
+    else {
         $LogPath
     }
     
@@ -188,8 +192,8 @@ function Export-EntraUsersDetails {
         Write-Host "Retrieving Entra users..." -ForegroundColor Cyan
         # First get all users with basic properties
         $users = Get-MgUser -All -Property Id, DisplayName, UserPrincipalName, Mail, JobTitle, Department, 
-            CompanyName, AccountEnabled, CreatedDateTime, UserType, MobilePhone, OfficeLocation, 
-            UsageLocation, City, Country, PostalCode, State, EmployeeHireDate, AssignedLicenses
+        CompanyName, AccountEnabled, CreatedDateTime, UserType, MobilePhone, OfficeLocation, 
+        UsageLocation, City, Country, PostalCode, State, EmployeeHireDate, AssignedLicenses
         
         Write-Host "Retrieved $($users.Count) users from Entra directory." -ForegroundColor Green
         
@@ -222,8 +226,8 @@ function Export-EntraUsersDetails {
         
         # Initialize progress bar parameters
         $progressParams = @{
-            Activity = "Exporting Entra User Details"
-            Status = "Processing users"
+            Activity        = "Exporting Entra User Details"
+            Status          = "Processing users"
             PercentComplete = 0
         }
         
@@ -279,7 +283,8 @@ function Export-EntraUsersDetails {
                     # Convert SKU ID to readable SKU part number using our lookup table
                     $skuFriendlyName = if ($skuLookup.ContainsKey($license.SkuId)) {
                         $skuLookup[$license.SkuId]
-                    } else {
+                    }
+                    else {
                         $license.SkuId  # Fall back to ID if not found in lookup
                     }
                     
@@ -290,38 +295,39 @@ function Export-EntraUsersDetails {
             # Join license details into a semicolon-separated string
             $licensesStr = if ($licenseDetails.Count -gt 0) {
                 $licenseDetails -join ";"
-            } else {
+            }
+            else {
                 ""  # Empty string if no licenses
             }
             
             # Process user details with additional attributes
             $userDetails.Add([PSCustomObject]@{
-                DisplayName = $user.DisplayName
-                UserPrincipalName = $user.UserPrincipalName
-                Email = $user.Mail
-                JobTitle = $user.JobTitle
-                Department = $user.Department
-                Company = $user.CompanyName
-                AccountEnabled = $user.AccountEnabled
-                CreatedDateTime = $user.CreatedDateTime
-                UserType = $user.UserType
-                Id = $user.Id
-                # Additional attributes
-                MobilePhone = $user.MobilePhone
-                OfficeLocation = $user.OfficeLocation
-                UsageLocation = $user.UsageLocation
-                City = $user.City
-                Country = $user.Country
-                PostalCode = $user.PostalCode
-                State = $user.State
-                EmployeeHireDate = $user.EmployeeHireDate
-                ManagerId = $managerId
-                ManagerName = $managerName
-                ManagerEmail = $managerEmail
-                # License information
-                AssignedLicenses = $licensesStr
-                LicenseCount = $licenseDetails.Count
-            })
+                    DisplayName       = $user.DisplayName
+                    UserPrincipalName = $user.UserPrincipalName
+                    Email             = $user.Mail
+                    JobTitle          = $user.JobTitle
+                    Department        = $user.Department
+                    Company           = $user.CompanyName
+                    AccountEnabled    = $user.AccountEnabled
+                    CreatedDateTime   = $user.CreatedDateTime
+                    UserType          = $user.UserType
+                    Id                = $user.Id
+                    # Additional attributes
+                    MobilePhone       = $user.MobilePhone
+                    OfficeLocation    = $user.OfficeLocation
+                    UsageLocation     = $user.UsageLocation
+                    City              = $user.City
+                    Country           = $user.Country
+                    PostalCode        = $user.PostalCode
+                    State             = $user.State
+                    EmployeeHireDate  = $user.EmployeeHireDate
+                    ManagerId         = $managerId
+                    ManagerName       = $managerName
+                    ManagerEmail      = $managerEmail
+                    # License information
+                    AssignedLicenses  = $licensesStr
+                    LicenseCount      = $licenseDetails.Count
+                })
         }
         
         # Update progress for export phase
@@ -374,13 +380,15 @@ function Export-PurviewAuditLogs {
     # Generate consistent output paths
     $outputFilePath = if ([string]::IsNullOrWhiteSpace($OutputPath)) {
         Get-OutputPath -BaseName "PurviewAuditLogs" -CreateDirectory
-    } else {
+    }
+    else {
         $OutputPath
     }
     
     $logFilePath = if ([string]::IsNullOrWhiteSpace($LogPath)) {
         Get-LogPath -BaseName "PurviewAuditLogs"
-    } else {
+    }
+    else {
         $LogPath
     }
     
@@ -404,8 +412,8 @@ function Export-PurviewAuditLogs {
         
         # Build operations filter if specified
         $params = @{
-            StartDate = $startDateStr
-            EndDate = $endDateStr
+            StartDate  = $startDateStr
+            EndDate    = $endDateStr
             ResultSize = $ResultSize
         }
         
@@ -424,13 +432,14 @@ function Export-PurviewAuditLogs {
         # Initialize progress bar with more descriptive activity
         $operationDescription = if ($Operations.Count -gt 0) {
             "for $($Operations -join ', ')"
-        } else {
+        }
+        else {
             "for ALL operations"
         }
         
         $progressParams = @{
-            Activity = "Retrieving Purview Audit Logs $operationDescription"
-            Status = "Initializing search..."
+            Activity        = "Retrieving Purview Audit Logs $operationDescription"
+            Status          = "Initializing search..."
             PercentComplete = 5
         }
         Write-Progress @progressParams
@@ -495,24 +504,24 @@ function Export-PurviewAuditLogs {
                 
                 # Create a custom object with the relevant properties
                 $processedLog = [PSCustomObject]@{
-                    CreationDate = $log.CreationDate
-                    UserIds = $log.UserIds
-                    Operations = $log.Operations
-                    RecordType = $log.RecordType
-                    Id = $log.Id
-                    Workload = $auditData.Workload
-                    ObjectId = $auditData.ObjectId
-                    UserId = $auditData.UserId
-                    ClientIP = $auditData.ClientIP
-                    UserAgent = $auditData.UserAgent
-                    Operation = $auditData.Operation
-                    ResultStatus = $auditData.ResultStatus
+                    CreationDate    = $log.CreationDate
+                    UserIds         = $log.UserIds
+                    Operations      = $log.Operations
+                    RecordType      = $log.RecordType
+                    Id              = $log.Id
+                    Workload        = $auditData.Workload
+                    ObjectId        = $auditData.ObjectId
+                    UserId          = $auditData.UserId
+                    ClientIP        = $auditData.ClientIP
+                    UserAgent       = $auditData.UserAgent
+                    Operation       = $auditData.Operation
+                    ResultStatus    = $auditData.ResultStatus
                     # For Copilot interactions, include specific fields if available
-                    CopilotPrompt = if ($auditData.Operation -eq "CopilotInteraction") { $auditData.CopilotPrompt } else { $null }
+                    CopilotPrompt   = if ($auditData.Operation -eq "CopilotInteraction") { $auditData.CopilotPrompt } else { $null }
                     CopilotResponse = if ($auditData.Operation -eq "CopilotInteraction") { $auditData.CopilotResponse } else { $null }
-                    CopilotContext = if ($auditData.Operation -eq "CopilotInteraction") { $auditData.CopilotContext } else { $null }
-                    Application = $auditData.Application
-                    AuditData = $log.AuditData # Include the full JSON for reference
+                    CopilotContext  = if ($auditData.Operation -eq "CopilotInteraction") { $auditData.CopilotContext } else { $null }
+                    Application     = $auditData.Application
+                    AuditData       = $log.AuditData # Include the full JSON for reference
                 }
                 
                 $processedLogs.Add($processedLog)
@@ -569,7 +578,8 @@ function Export-CopilotAuditLogs {
     # Generate consistent output paths
     $outputDir = if ([string]::IsNullOrWhiteSpace($OutputFolder)) {
         $script:Config.DefaultOutputDirectory
-    } else {
+    }
+    else {
         $OutputFolder
     }
     
@@ -582,7 +592,8 @@ function Export-CopilotAuditLogs {
     # Generate output filename
     $outputFile = if ([string]::IsNullOrWhiteSpace($OutputFileName)) {
         Join-Path -Path $outputDir -ChildPath "Copilot_Activities_$(Get-Date -Format 'yyyyMMdd_HHmmss').csv"
-    } else {
+    }
+    else {
         Join-Path -Path $outputDir -ChildPath $OutputFileName
     }
     
@@ -646,37 +657,49 @@ function Export-CopilotAuditLogs {
         # Further refine app type based on other context clues
         If ($AuditData.copiloteventdata.contexts.id -like "*https://teams.microsoft.com/*") {
             $CopilotApp = "Teams"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "bizchat") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "bizchat") {
             $CopilotApp = "Copilot for M365 Chat"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Outlook") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Outlook") {
             $CopilotApp = "Outlook"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Copilot Studio") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Copilot Studio") {
             $CopilotApp = "Copilot Studio Agent"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Word") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Word") {
             $CopilotApp = "Word"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Excel") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Excel") {
             $CopilotApp = "Excel"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "PowerPoint") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "PowerPoint") {
             $CopilotApp = "PowerPoint"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Teams") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Teams") {
             $CopilotApp = "Teams"
-        } ElseIf ($AuditData.CopiloteventData.AppHost -eq "Bing") {
+        }
+        ElseIf ($AuditData.CopiloteventData.AppHost -eq "Bing") {
             $CopilotApp = "Bing"
-        } ElseIf ($AuditData.AppIdentity -like "*Copilot.Studio*") {
+        }
+        ElseIf ($AuditData.AppIdentity -like "*Copilot.Studio*") {
             $CopilotApp = "Copilot Studio Agent"
         }
         
         # Determine location
         If ($AuditData.copiloteventdata.contexts.id -like "*/sites/*") {
             $CopilotLocation = "SharePoint Online"
-        } ElseIf ($AuditData.copiloteventdata.contexts.id -like "*https://teams.microsoft.com/*") {
+        }
+        ElseIf ($AuditData.copiloteventdata.contexts.id -like "*https://teams.microsoft.com/*") {
             $CopilotLocation = "Teams"
             If ($AuditData.copiloteventdata.contexts.id -like "*ctx=channel*") {
                 $CopilotLocation = "Teams Channel"
-            } Else {
+            }
+            Else {
                 $CopilotLocation = "Teams Chat"
             }
-        } ElseIf ($AuditData.copiloteventdata.contexts.id -like "*/personal/*") {
+        }
+        ElseIf ($AuditData.copiloteventdata.contexts.id -like "*/personal/*") {
             $CopilotLocation = "OneDrive for Business"
         }
         
@@ -684,13 +707,14 @@ function Export-CopilotAuditLogs {
         $AgentName = ""
         if ($CopilotApp -eq "Copilot Studio Agent" -and $AuditData.AppIdentity -match '.*_(.+?)$') {
             $AgentName = $Matches[1]
-        } elseif ($CopilotApp -eq "Copilot Studio Agent" -and $AuditData.AppIdentity -match '.*-(.+?)$') {
+        }
+        elseif ($CopilotApp -eq "Copilot Studio Agent" -and $AuditData.AppIdentity -match '.*-(.+?)$') {
             $AgentName = $Matches[1]
         }
         
         return @{
-            App = $CopilotApp
-            Location = $CopilotLocation
+            App       = $CopilotApp
+            Location  = $CopilotLocation
             AgentName = $AgentName
         }
     }
@@ -719,7 +743,8 @@ function Export-CopilotAuditLogs {
             $Context = $null
             If ($auditDataObj.copiloteventdata.contexts.id) {
                 $Context = $auditDataObj.copiloteventdata.contexts.id
-            } ElseIf ($auditDataObj.copiloteventdata.threadid) {
+            }
+            ElseIf ($auditDataObj.copiloteventdata.threadid) {
                 $Context = $auditDataObj.copiloteventdata.threadid
             }
             
@@ -738,36 +763,36 @@ function Export-CopilotAuditLogs {
             
             # Create a custom object with flattened properties
             $outputObj = [PSCustomObject][Ordered]@{
-                TimeStamp                     = (Get-Date $CreationTime -format "dd-MMM-yyyy HH:mm:ss")
-                RecordID                      = $auditDataObj.Id
-                User                          = $UserID
-                ClientRegion                  = $auditDataObj.ClientRegion
-                App                           = $appInfo.App
-                AgentName                     = $appInfo.AgentName
-                Location                      = $appInfo.Location
-                AppHost                       = $copilotData.AppHost
-                AppIdentity                   = $auditDataObj.AppIdentity
-                AppContext                    = $Context
-                ThreadId                      = $copilotData.ThreadId
-                AISystemPlugins               = ($copilotData.AISystemPlugin | ForEach-Object { "$($_.Id):$($_.Name)" }) -join '; '
-                ModelDetails                  = ($copilotData.ModelTransparencyDetails | ForEach-Object { $_.ModelName }) -join '; '
-                ContextTypes                  = ($copilotData.Contexts | ForEach-Object { $_.Type }) -join '; '
-                HasPrompt                     = ($copilotData.Messages | Where-Object { $_.isPrompt -eq $true } | Measure-Object).Count -gt 0
-                HasResponse                   = ($copilotData.Messages | Where-Object { $_.isPrompt -eq $false } | Measure-Object).Count -gt 0
-                MessageCount                  = ($copilotData.Messages | Measure-Object).Count
-                AccessedResourceCount         = ($copilotData.AccessedResources | Measure-Object).Count
-                AccessedResourceNames         = $AccessedResourceNames
-                AccessedResourceLocations     = $AccessedResourceLocations
-                AccessedResourceUrls          = $AccessedResourceUrls
-                AccessedResourceTypes         = $AccessedResourceTypes
-                AccessedResourceActions       = $AccessedResourceActions
-                Workload                      = $auditDataObj.Workload
-                OrganizationId                = $auditDataObj.OrganizationId
-                CopilotLogVersion             = $auditDataObj.CopilotLogVersion
+                TimeStamp                 = (Get-Date $CreationTime -format "dd-MMM-yyyy HH:mm:ss")
+                RecordID                  = $auditDataObj.Id
+                User                      = $UserID
+                ClientRegion              = $auditDataObj.ClientRegion
+                App                       = $appInfo.App
+                AgentName                 = $appInfo.AgentName
+                Location                  = $appInfo.Location
+                AppHost                   = $copilotData.AppHost
+                AppIdentity               = $auditDataObj.AppIdentity
+                AppContext                = $Context
+                ThreadId                  = $copilotData.ThreadId
+                AISystemPlugins           = ($copilotData.AISystemPlugin | ForEach-Object { "$($_.Id):$($_.Name)" }) -join '; '
+                ModelDetails              = ($copilotData.ModelTransparencyDetails | ForEach-Object { $_.ModelName }) -join '; '
+                ContextTypes              = ($copilotData.Contexts | ForEach-Object { $_.Type }) -join '; '
+                HasPrompt                 = ($copilotData.Messages | Where-Object { $_.isPrompt -eq $true } | Measure-Object).Count -gt 0
+                HasResponse               = ($copilotData.Messages | Where-Object { $_.isPrompt -eq $false } | Measure-Object).Count -gt 0
+                MessageCount              = ($copilotData.Messages | Measure-Object).Count
+                AccessedResourceCount     = ($copilotData.AccessedResources | Measure-Object).Count
+                AccessedResourceNames     = $AccessedResourceNames
+                AccessedResourceLocations = $AccessedResourceLocations
+                AccessedResourceUrls      = $AccessedResourceUrls
+                AccessedResourceTypes     = $AccessedResourceTypes
+                AccessedResourceActions   = $AccessedResourceActions
+                Workload                  = $auditDataObj.Workload
+                OrganizationId            = $auditDataObj.OrganizationId
+                CopilotLogVersion         = $auditDataObj.CopilotLogVersion
                 # Flag fields for specific analyses
-                IsCopilotStudio               = $appInfo.App -eq "Copilot Studio Agent"
-                IsCustomAgent                 = ($appInfo.App -eq "Copilot Studio Agent") -and ($appInfo.AgentName -ne "")
-                IsSPOAgent                    = $copilotData.AppHost -eq "SharePoint" 
+                IsCopilotStudio           = $appInfo.App -eq "Copilot Studio Agent"
+                IsCustomAgent             = ($appInfo.App -eq "Copilot Studio Agent") -and ($appInfo.AgentName -ne "")
+                IsSPOAgent                = $copilotData.AppHost -eq "SharePoint" 
             }
             
             return $outputObj
@@ -783,19 +808,14 @@ function Export-CopilotAuditLogs {
         Connect-ExchangeOnline -ShowBanner:$false -ErrorAction Stop
         Write-Host "Successfully connected to Exchange Online." -ForegroundColor Green
         Write-LogFile "Successfully connected to Exchange Online."
-    } catch{
+    }
+    catch {
         Write-Host "Failed to connect to Exchange Online: $_" -ForegroundColor Red
         Write-LogFile "Failed to connect to Exchange Online: $_"
         return
     }
     
     try {
-        # Define start and end date for audit log search
-        $endDate = Get-Date
-        $startDate = $endDate.AddDays(-$DaysToSearch)
-        
-        Write-LogFile "BEGIN: Retrieving audit records between $($startDate) and $($endDate), RecordType=CopilotInteraction."
-        Write-Host "Searching audit logs for Copilot interactions from $startDate to $endDate..."
         
         # Search for CopilotInteraction operations
         $results = @()
@@ -803,60 +823,77 @@ function Export-CopilotAuditLogs {
         $currentOffset = 0
         $hasMoreRecords = $true
         
-        $sessionID = [Guid]::NewGuid().ToString() + "_" + "CopilotAuditExport" + (Get-Date).ToString("yyyyMMddHHmmssfff")
+        for ($i = 0; $i -lt $DaysToSearch; $i++) {
+            <# Action that will repeat until the condition is met #>
+            # Define start and end date for audit log search
+            $today = Get-Date
+            $endDate = $today.AddDays(-$i)
+            $startDate = $today.AddDays( - ($i + 1))
+
+            Write-LogFile "BEGIN: Retrieving audit records between $($startDate) and $($endDate), RecordType=CopilotInteraction."
+            Write-Host "Searching audit logs for Copilot interactions from $startDate to $endDate..."
         
-        # Initialize progress bar parameters
-        $progressParams = @{
-            Activity = "Retrieving Copilot Audit Logs"
-            Status = "Searching for records..."
-            PercentComplete = 0
-        }
+            $hasMoreRecords = $true
+
+            $sessionID = [Guid]::NewGuid().ToString() + "_" + "CopilotAuditExport" + ($startDate).ToString("yyyyMMddHHmmssfff")
         
-        # Display initial progress bar
-        Write-Progress @progressParams
+            # Initialize progress bar parameters
+            $progressParams = @{
+                Activity        = "Retrieving Copilot Audit Logs"
+                Status          = "Searching for records..."
+                PercentComplete = 0
+            }
         
-        while ($hasMoreRecords) {
-            $progressParams.Status = "Retrieving batch starting at offset $currentOffset..."
+            # Display initial progress bar
             Write-Progress @progressParams
+        
+            while ($hasMoreRecords) {
+                $progressParams.Status = "Retrieving batch starting at offset $currentOffset..."
+                Write-Progress @progressParams
             
-            try {
-                # Search specifically for Copilot interactions
-                $batchResults = Search-UnifiedAuditLog -StartDate $startDate -EndDate $endDate -RecordType "CopilotInteraction" -ResultSize $batchSize -SessionCommand ReturnLargeSet -SessionId $sessionID -Operations "CopilotInteraction" -ErrorAction Stop
+                try {
+                    # Search specifically for Copilot interactions
+                    $batchResults = Search-UnifiedAuditLog -StartDate $startDate -EndDate $endDate -RecordType "CopilotInteraction" -ResultSize $batchSize -SessionCommand ReturnLargeSet -SessionId $sessionID -Operations "CopilotInteraction" -ErrorAction Stop
+                    $batchReadCount = ($batchResults | Measure-Object).Count
                 
-                if ($batchResults -and $batchResults.Count -gt 0) {
-                    # Remove any duplicate records and make sure that everything is sorted in date order
-                    $batchResults = $batchResults | Sort-Object Identity -Unique 
-                    $batchResults = $batchResults | Sort-Object {$_.CreationDate -as [datetime]}
+                    if ($batchResults -and $batchReadCount -ne 0) {
+                        # Remove any duplicate records and make sure that everything is sorted in date order
+                        $batchResults = $batchResults | Sort-Object Identity -Unique 
+                        $batchResults = $batchResults | Sort-Object { $_.CreationDate -as [datetime] }
                     
-                    $results += $batchResults
-                    $currentOffset += $batchResults.Count
+                        $results += $batchResults
+                        $currentOffset += $batchResults.Count
                     
-                    if ($batchResults.Count -lt $batchSize) {
+                        #if ($batchResults.Count -lt $batchSize) {
+                        if ($batchReadCount -lt $batchSize) {
+                            $hasMoreRecords = $false
+                        }
+                    
+                        $progressParams.PercentComplete = [Math]::Min(50, ($currentOffset / ($currentOffset + $batchSize)) * 50)
+                        Write-Progress @progressParams
+                    
+                        Write-LogFile "INFO: Batch Retrieved $($batchReadCount); Actual Retrieved $($batchResults.Count) records. Total records so far: $($results.Count); From: $($startDate) to $($endDate)."
+                        Write-Host "Batch Retrieved $($batchReadCount); Actual Retrieved $($batchResults.Count) records. Total records so far: $($results.Count); From: $($startDate) to $($endDate)."
+                    }
+                    else {
+                        $hasMoreRecords = $false
+                        Write-Host "No more records found. From: $($startDate) to $($endDate)."
+                    }
+                }
+                catch {
+                    Write-Host "Error during Search-UnifiedAuditLog: $_" -ForegroundColor Red
+                    Write-LogFile "Error during Search-UnifiedAuditLog: $_"
+                
+                    # Check if this is a fatal error or if we should continue
+                    if ($_.Exception.Message -like "*not recognized as the name of a cmdlet*") {
+                        Write-Host "The Search-UnifiedAuditLog cmdlet is not available. Cannot continue." -ForegroundColor Red
+                        return
+                    }
+                    else {
+                        # For other errors, we might be able to continue
+                        Write-Host "Continuing with existing results..." -ForegroundColor Yellow
                         $hasMoreRecords = $false
                     }
-                    
-                    $progressParams.PercentComplete = [Math]::Min(50, ($currentOffset / ($currentOffset + $batchSize)) * 50)
-                    Write-Progress @progressParams
-                    
-                    Write-LogFile "INFO: Retrieved $($batchResults.Count) records. Total records so far: $($results.Count)"
-                    Write-Host "Retrieved $($batchResults.Count) records. Total records so far: $($results.Count)"
-                }
-                else {
-                    $hasMoreRecords = $false
-                    Write-Host "No more records found."
-                }
-            } catch {
-                Write-Host "Error during Search-UnifiedAuditLog: $_" -ForegroundColor Red
-                Write-LogFile "Error during Search-UnifiedAuditLog: $_"
-                
-                # Check if this is a fatal error or if we should continue
-                if ($_.Exception.Message -like "*not recognized as the name of a cmdlet*") {
-                    Write-Host "The Search-UnifiedAuditLog cmdlet is not available. Cannot continue." -ForegroundColor Red
-                    return
-                } else {
-                    # For other errors, we might be able to continue
-                    Write-Host "Continuing with existing results..." -ForegroundColor Yellow
-                    $hasMoreRecords = $false
                 }
             }
         }
@@ -902,7 +939,8 @@ function Export-CopilotAuditLogs {
             $processedResults | Export-Csv -Path $outputFile -NoTypeInformation
             Write-Host "Export completed successfully. File saved to $outputFile" -ForegroundColor Green
             Write-LogFile "END: Successfully exported $($processedResults.Count) audit records to $outputFile."
-        } else {
+        }
+        else {
             Write-Host "No records to export after processing." -ForegroundColor Yellow
             Write-LogFile "END: No records to export after processing."
         }
@@ -921,7 +959,8 @@ function Export-CopilotAuditLogs {
                 Write-Host 
                 Write-Host "Disconnecting from Exchange Online..." -ForegroundColor Yellow
                 Disconnect-ExchangeOnline -Confirm:$false -ErrorAction SilentlyContinue 
-            } catch {}
+            }
+            catch {}
         }
     }
 }
@@ -944,7 +983,8 @@ function Export-CopilotUsageReports {
     # Generate consistent output paths
     $outputDir = if ([string]::IsNullOrWhiteSpace($OutputFolder)) {
         $script:Config.DefaultOutputDirectory
-    } else {
+    }
+    else {
         $OutputFolder
     }
     
@@ -956,7 +996,8 @@ function Export-CopilotUsageReports {
     
     $logFilePath = if ([string]::IsNullOrWhiteSpace($LogPath)) {
         Get-LogPath -BaseName "CopilotUsageReports"
-    } else {
+    }
+    else {
         $LogPath
     }
     
@@ -991,8 +1032,8 @@ function Export-CopilotUsageReports {
         
         # Initialize progress bar parameters
         $progressParams = @{
-            Activity = "Retrieving Copilot Usage Data"
-            Status = "Fetching data from Microsoft Graph..."
+            Activity        = "Retrieving Copilot Usage Data"
+            Status          = "Fetching data from Microsoft Graph..."
             PercentComplete = 10
         }
         
@@ -1041,19 +1082,19 @@ function Export-CopilotUsageReports {
             }
             
             $UsageData.Add([PSCustomObject]@{
-                reportRefreshDate = $User.reportRefreshDate
-                UserPrincipalName = $User.UserPrincipalName
-                DisplayName = $User.DisplayName
-                LastActivityDate = $User.LastActivityDate
-                copilotChatLastActivityDate = $User.copilotChatLastActivityDate
-                microsoftTeamsCopilotLastActivityDate = $user.microsoftTeamsCopilotLastActivityDate
-                wordCopilotLastActivityDate = $user.wordCopilotLastActivityDate
-                excelCopilotLastActivityDate = $user.excelCopilotLastActivityDate
-                powerPointCopilotLastActivityDate = $user.powerPointCopilotLastActivityDate
-                outlookCopilotLastActivityDate = $user.outlookCopilotLastActivityDate
-                oneNoteCopilotLastActivityDate = $user.oneNoteCopilotLastActivityDate
-                loopCopilotLastActivityDate = $user.loopCopilotLastActivityDate   
-            })
+                    reportRefreshDate                     = $User.reportRefreshDate
+                    UserPrincipalName                     = $User.UserPrincipalName
+                    DisplayName                           = $User.DisplayName
+                    LastActivityDate                      = $User.LastActivityDate
+                    copilotChatLastActivityDate           = $User.copilotChatLastActivityDate
+                    microsoftTeamsCopilotLastActivityDate = $user.microsoftTeamsCopilotLastActivityDate
+                    wordCopilotLastActivityDate           = $user.wordCopilotLastActivityDate
+                    excelCopilotLastActivityDate          = $user.excelCopilotLastActivityDate
+                    powerPointCopilotLastActivityDate     = $user.powerPointCopilotLastActivityDate
+                    outlookCopilotLastActivityDate        = $user.outlookCopilotLastActivityDate
+                    oneNoteCopilotLastActivityDate        = $user.oneNoteCopilotLastActivityDate
+                    loopCopilotLastActivityDate           = $user.loopCopilotLastActivityDate   
+                })
         }
         
         # Complete the progress bar
@@ -1203,8 +1244,8 @@ function Show-MainMenu {
             }
             
             $params = @{
-                StartDate = $startDate
-                EndDate = $endDate
+                StartDate  = $startDate
+                EndDate    = $endDate
                 ResultSize = $resultSize
             }
             
@@ -1333,7 +1374,8 @@ try {
     Register-EngineEvent -SourceIdentifier ([System.Management.Automation.PsEngineEvent]::Exiting) -Action {
         Disconnect-AllServices
     } -ErrorAction SilentlyContinue
-} catch {
+}
+catch {
     Write-Host "Could not register exit handler: $_" -ForegroundColor Yellow
 }
 
